@@ -7,42 +7,55 @@ import java.io.IOException;
 import java.util.*;
 
 public class Parser {
-    static List<Country> countries = new ArrayList<>();
+    public static List<Country> countries = new ArrayList<>();
 
     public List<Country> sortByName(){
         List<Country> sortedByName = new ArrayList<>(countries);
         // Sort countries alphabetically (least)
-        //TODO
+        sortedByName.sort(Comparator.comparing(Country::getName));
+
         return  sortedByName;
     }
 
     public List<Country> sortByPopulation(){
         List<Country> sortedByPopulation = new ArrayList<>(countries);
         // Sort countries by population (most)
-        //TODO
+        sortedByPopulation.sort(Comparator.comparing(Country::getPopulation).reversed());
+
         return sortedByPopulation;
     }
 
     public List<Country> sortByArea(){
         List<Country> sortedByArea = new ArrayList<>(countries);
         // Sort countries by area (most)
-        //TODO
+        sortedByArea.sort(Comparator.comparing(Country::getArea).reversed());
+
         return sortedByArea;
     }
 
-    public void setUp() throws IOException {
+    public static void setUp() throws IOException {
 
         //Parse the HTML file using Jsoup
-        //TODO
+        File input = new File("src/Resources/country-list.html");
+        Document doc = Jsoup.parse(input, "UTF-8");
 
         // Extract data from the HTML
-        //TODO
+        Elements countryClass = doc.select("div.country");
 
-        // Iterate through each country div to extract country data
-        //TODO
+        // Iterate through each country div to extract country data\
+        for (Element country: countryClass){
+            String name = country.select(".country-name").first().ownText();
+            String capital = country.select(".country-info").select("span.country-capital").first().ownText();
+            int population = Integer.parseInt(country.select(".country-info").select("span.country-population").first().ownText());
+            double area = Double.parseDouble(country.select(".country-info").select("span.country-area").first().ownText());
+
+            countries.add(new Country(name, capital, population, area));
+        }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //you can test your code here before you run the unit tests ;)
+        setUp();
+
     }
 }
